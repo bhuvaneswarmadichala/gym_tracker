@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}FitTrack - Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">Welcome to <span class="text-primary">FitTrack</span></h1>
+                <p class="lead mb-4">
+                    Your personal gym membership and workout tracking companion. 
+                    Track your progress, log workouts, and achieve your fitness goals with ease.
+                </p>
+                <div class="d-grid gap-3 d-sm-flex">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-user-plus"></i> Get Started
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="fas fa-chart-line"></i> View Dashboard
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-dumbbell hero-icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <h2 class="text-center mb-5">Key Features</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-user-plus fa-3x text-primary"></i>
+                </div>
+                <h4>Easy Registration</h4>
+                <p>Quick and simple member registration process with multiple membership options.</p>
+                <a href="{{ url_for('register') }}" class="btn btn-sm btn-outline-primary">Register Now</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-clipboard-list fa-3x text-success"></i>
+                </div>
+                <h4>Workout Plans</h4>
+                <p>Access beginner, intermediate, and advanced workout plans tailored to your level.</p>
+                <a href="{{ url_for('plans') }}" class="btn btn-sm btn-outline-success">View Plans</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-running fa-3x text-warning"></i>
+                </div>
+                <h4>Log Workouts</h4>
+                <p>Track your daily exercises, duration, and calories burned with ease.</p>
+                <a href="{{ url_for('log_workout') }}" class="btn btn-sm btn-outline-warning">Log Workout</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-chart-line fa-3x text-danger"></i>
+                </div>
+                <h4>Progress Dashboard</h4>
+                <p>Visualize your fitness journey with comprehensive statistics and charts.</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-danger">View Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-4">Why Choose FitTrack?</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Simple & Intuitive:</strong> Easy-to-use interface for all fitness levels
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Track Progress:</strong> Monitor your workouts and calories burned
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Multiple Plans:</strong> Choose from beginner to advanced workout routines
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Visual Analytics:</strong> See your progress through charts and statistics
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6 text-center">
+                <div class="stats-box p-4">
+                    <h3 class="text-primary mb-4">Start Your Journey Today!</h3>
+                    <p class="lead">Join thousands of members tracking their fitness goals</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg mt-3">
+                        <i class="fas fa-rocket"></i> Join Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
