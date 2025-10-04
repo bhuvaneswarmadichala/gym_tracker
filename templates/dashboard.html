@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}FitTrack - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-chart-line text-primary"></i> Fitness Dashboard
+        </h1>
+        <p class="lead text-muted">Track your progress and achievements</p>
+    </div>
+    
+    <!-- Summary Statistics -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ total_members }}</h3>
+                    <p class="mb-0">Total Members</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-success text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats[0] if stats else 0 }}</h3>
+                    <p class="mb-0">Total Workouts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-warning text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats[1] if stats else 0 }}</h3>
+                    <p class="mb-0">Total Minutes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-danger text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats[2] if stats else 0 }}</h3>
+                    <p class="mb-0">Total Calories</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Daily Calories Burned
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="caloriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line"></i> Daily Workout Count
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="workoutsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Member Statistics -->
+    {% if member_stats %}
+    <div class="card shadow mb-5">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user-chart"></i> Member Statistics
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Name</th>
+                            <th>Membership</th>
+                            <th>Workouts</th>
+                            <th>Total Duration</th>
+                            <th>Total Calories</th>
+                            <th>Avg Calories/Workout</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in member_stats %}
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ member.member_id }}</span></td>
+                            <td><strong>{{ member.name }}</strong></td>
+                            <td>
+                                <span class="badge 
+                                    {% if member.membership == 'VIP' %}bg-danger
+                                    {% elif member.membership == 'Premium' %}bg-warning
+                                    {% elif member.membership == 'Standard' %}bg-info
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ member.membership }}
+                                </span>
+                            </td>
+                            <td>{{ member.workout_count }}</td>
+                            <td>{{ member.total_duration }} min</td>
+                            <td>{{ member.total_calories }} cal</td>
+                            <td>{{ (member.total_calories / member.workout_count)|round|int }} cal</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Recent Workouts -->
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-history"></i> Recent Workouts (Last 50)
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if workouts %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Member</th>
+                            <th>Date</th>
+                            <th>Exercise</th>
+                            <th>Duration</th>
+                            <th>Calories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for workout in workouts %}
+                        <tr>
+                            <td>{{ workout.id }}</td>
+                            <td>
+                                <strong>{{ workout.member_name }}</strong>
+                                <br><small class="text-muted">ID: {{ workout.member_id }}</small>
+                            </td>
+                            <td>{{ workout.date }}</td>
+                            <td>
+                                <i class="fas fa-dumbbell text-primary"></i> 
+                                {{ workout.exercise }}
+                            </td>
+                            <td>
+                                <i class="fas fa-clock text-warning"></i> 
+                                {{ workout.duration }} min
+                            </td>
+                            <td>
+                                <i class="fas fa-fire text-danger"></i> 
+                                {{ workout.calories }} cal
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No workouts logged yet</h4>
+                <p class="text-muted">Start tracking your fitness journey today!</p>
+                <a href="{{ url_for('log_workout') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Log Your First Workout
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card shadow-sm bg-light">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">Quick Actions</h5>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{{ url_for('log_workout') }}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Log New Workout
+                        </a>
+                        <a href="{{ url_for('plans') }}" class="btn btn-info">
+                            <i class="fas fa-clipboard-list"></i> View Plans
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Register Member
+                        </a>
+                        <button onclick="window.print()" class="btn btn-secondary">
+                            <i class="fas fa-print"></i> Print Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Fetch chart data and render charts
+    $.ajax({
+        url: '/api/chart-data',
+        method: 'GET',
+        success: function(data) {
+            // Calories Chart
+            var ctxCalories = document.getElementById('caloriesChart').getContext('2d');
+            new Chart(ctxCalories, {
+                type: 'bar',
+                data: {
+                    labels: data.dates,
+                    datasets: [{
+                        label: 'Calories Burned',
+                        data: data.calories,
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' cal';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + ' calories';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Workouts Chart
+            var ctxWorkouts = document.getElementById('workoutsChart').getContext('2d');
+            new Chart(ctxWorkouts, {
+                type: 'line',
+                data: {
+                    labels: data.dates,
+                    datasets: [{
+                        label: 'Number of Workouts',
+                        data: data.workouts,
+                        backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + ' workouts';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        error: function() {
+            console.log('Error loading chart data');
+        }
+    });
+});
+</script>
+{% endblock %}
