@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}FitTrack - Register{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus"></i> Member Registration
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted text-center mb-4">
+                        Fill out the form below to become a FitTrack member
+                    </p>
+                    
+                    <form id="registrationForm" method="POST" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user"></i> Full Name *
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="age" class="form-label">
+                                <i class="fas fa-calendar"></i> Age *
+                            </label>
+                            <input type="number" class="form-control" id="age" name="age" 
+                                   placeholder="Enter your age" min="10" max="100" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> Email Address *
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="membership_type" class="form-label">
+                                <i class="fas fa-id-card"></i> Membership Type *
+                            </label>
+                            <select class="form-select" id="membership_type" name="membership_type" required>
+                                <option value="">Choose membership type...</option>
+                                <option value="Basic">Basic - $29/month</option>
+                                <option value="Standard">Standard - $49/month</option>
+                                <option value="Premium">Premium - $79/month</option>
+                                <option value="VIP">VIP - $99/month</option>
+                            </select>
+                            <div class="form-text">
+                                <small>
+                                    <strong>Basic:</strong> Gym access only<br>
+                                    <strong>Standard:</strong> Gym + Group classes<br>
+                                    <strong>Premium:</strong> All + Personal trainer (2 sessions/month)<br>
+                                    <strong>VIP:</strong> All + Unlimited personal training
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check"></i> Register Now
+                            </button>
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <p class="text-muted">
+                    Already registered? 
+                    <a href="{{ url_for('log_workout') }}">Log your workout</a> or 
+                    <a href="{{ url_for('dashboard') }}">view your dashboard</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#registrationForm').on('submit', function(e) {
+        // Form validation feedback
+        var name = $('#name').val().trim();
+        var age = $('#age').val();
+        var email = $('#email').val().trim();
+        var membership = $('#membership_type').val();
+        
+        if (!name || !age || !email || !membership) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+            return false;
+        }
+        
+        if (age < 10 || age > 100) {
+            e.preventDefault();
+            alert('Please enter a valid age between 10 and 100.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}
