@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}FitTrack - Workout Plans{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-clipboard-list text-primary"></i> Workout Plans
+        </h1>
+        <p class="lead text-muted">Choose a plan that matches your fitness level</p>
+    </div>
+    
+    <div class="row g-4">
+        {% for plan in plans %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm plan-card">
+                <div class="card-header text-center 
+                    {% if plan.level == 'Beginner' %}bg-success{% elif plan.level == 'Intermediate' %}bg-warning{% else %}bg-danger{% endif %} 
+                    text-white">
+                    <h3 class="mb-0">
+                        {% if plan.level == 'Beginner' %}
+                            <i class="fas fa-seedling"></i>
+                        {% elif plan.level == 'Intermediate' %}
+                            <i class="fas fa-fire"></i>
+                        {% else %}
+                            <i class="fas fa-trophy"></i>
+                        {% endif %}
+                        {{ plan.name }}
+                    </h3>
+                    <p class="mb-0 small">{{ plan.level }} Level</p>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">{{ plan.description }}</p>
+                    
+                    <h5 class="mb-3">
+                        <i class="fas fa-list-ul"></i> Exercises:
+                    </h5>
+                    <div class="exercise-list">
+                        {% for exercise in plan.exercises %}
+                        <div class="exercise-item mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="fas fa-dumbbell text-primary"></i> 
+                                        {{ exercise.name }}
+                                    </h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-redo"></i> {{ exercise.reps }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-info">
+                                    {{ exercise.calories }} cal
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="mb-2">
+                            <i class="fas fa-fire text-danger"></i> Estimated Total Calories:
+                        </h6>
+                        <p class="mb-0 text-muted">
+                            {% if plan.level == 'Beginner' %}
+                                270-390 calories per session
+                            {% elif plan.level == 'Intermediate' %}
+                                660-860 calories per session
+                            {% else %}
+                                1030-1380 calories per session
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="{{ url_for('log_workout') }}" class="btn btn-primary w-100">
+                        <i class="fas fa-plus"></i> Start This Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="alert alert-info mt-5" role="alert">
+        <h5 class="alert-heading">
+            <i class="fas fa-info-circle"></i> Tips for Success:
+        </h5>
+        <ul class="mb-0">
+            <li>Start with a plan that matches your current fitness level</li>
+            <li>Consistency is key - aim for 3-5 workouts per week</li>
+            <li>Stay hydrated and maintain proper form during exercises</li>
+            <li>Track your progress regularly using the <a href="{{ url_for('log_workout') }}">workout log</a></li>
+            <li>Gradually increase intensity as you build strength and endurance</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

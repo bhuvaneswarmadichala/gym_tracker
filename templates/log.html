@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}FitTrack - Log Workout{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-running"></i> Log Your Workout
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted text-center mb-4">
+                        Track your daily exercise and monitor your progress
+                    </p>
+                    
+                    <form id="workoutForm" method="POST" action="{{ url_for('log_workout') }}">
+                        <div class="mb-3">
+                            <label for="member_id" class="form-label">
+                                <i class="fas fa-id-badge"></i> Member ID *
+                            </label>
+                            <input type="number" class="form-control" id="member_id" name="member_id" 
+                                   placeholder="Enter your member ID" required>
+                            <div class="form-text">
+                                Don't have a Member ID? <a href="{{ url_for('register') }}">Register here</a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="date" class="form-label">
+                                <i class="fas fa-calendar"></i> Workout Date *
+                            </label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="exercise" class="form-label">
+                                <i class="fas fa-dumbbell"></i> Exercise Type *
+                            </label>
+                            <select class="form-select" id="exercise" name="exercise" required>
+                                <option value="">Choose exercise type...</option>
+                                <optgroup label="Cardio">
+                                    <option value="Running">Running</option>
+                                    <option value="Walking">Walking</option>
+                                    <option value="Cycling">Cycling</option>
+                                    <option value="Swimming">Swimming</option>
+                                    <option value="HIIT">HIIT Training</option>
+                                </optgroup>
+                                <optgroup label="Strength Training">
+                                    <option value="Weight Lifting">Weight Lifting</option>
+                                    <option value="Push-ups">Push-ups</option>
+                                    <option value="Pull-ups">Pull-ups</option>
+                                    <option value="Squats">Squats</option>
+                                    <option value="Deadlifts">Deadlifts</option>
+                                    <option value="Bench Press">Bench Press</option>
+                                </optgroup>
+                                <optgroup label="Flexibility & Core">
+                                    <option value="Yoga">Yoga</option>
+                                    <option value="Pilates">Pilates</option>
+                                    <option value="Stretching">Stretching</option>
+                                    <option value="Core Work">Core Work</option>
+                                    <option value="Plank">Plank</option>
+                                </optgroup>
+                                <optgroup label="Other">
+                                    <option value="CrossFit">CrossFit</option>
+                                    <option value="Boxing">Boxing</option>
+                                    <option value="Dance">Dance</option>
+                                    <option value="Other">Other</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">
+                                <i class="fas fa-clock"></i> Duration (minutes) *
+                            </label>
+                            <input type="number" class="form-control" id="duration" name="duration" 
+                                   placeholder="Enter duration in minutes" min="1" max="300" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="calories_burned" class="form-label">
+                                <i class="fas fa-fire"></i> Calories Burned *
+                            </label>
+                            <input type="number" class="form-control" id="calories_burned" name="calories_burned" 
+                                   placeholder="Enter calories burned" min="1" max="2000" required>
+                            <div class="form-text">
+                                <small>Estimate based on exercise intensity and duration</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Log Workout
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-chart-line"></i> View Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb"></i> Calorie Estimation Guide
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Light Intensity (30 min):</h6>
+                            <ul class="small">
+                                <li>Walking: 100-150 cal</li>
+                                <li>Yoga: 120-180 cal</li>
+                                <li>Stretching: 60-90 cal</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>High Intensity (30 min):</h6>
+                            <ul class="small">
+                                <li>Running: 300-400 cal</li>
+                                <li>HIIT: 350-450 cal</li>
+                                <li>Swimming: 250-350 cal</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Set today's date as default
+    var today = new Date().toISOString().split('T')[0];
+    $('#date').val(today);
+    
+    // Form validation
+    $('#workoutForm').on('submit', function(e) {
+        var memberId = $('#member_id').val();
+        var duration = $('#duration').val();
+        var calories = $('#calories_burned').val();
+        
+        if (!memberId || memberId < 1) {
+            e.preventDefault();
+            alert('Please enter a valid Member ID.');
+            return false;
+        }
+        
+        if (duration < 1 || duration > 300) {
+            e.preventDefault();
+            alert('Duration must be between 1 and 300 minutes.');
+            return false;
+        }
+        
+        if (calories < 1 || calories > 2000) {
+            e.preventDefault();
+            alert('Calories must be between 1 and 2000.');
+            return false;
+        }
+    });
+    
+    // Auto-calculate calories based on exercise and duration (optional enhancement)
+    $('#exercise, #duration').on('change', function() {
+        var exercise = $('#exercise').val();
+        var duration = parseInt($('#duration').val()) || 0;
+        
+        if (exercise && duration > 0) {
+            var caloriesPerMin = {
+                'Running': 10,
+                'Walking': 4,
+                'Cycling': 8,
+                'Swimming': 9,
+                'HIIT': 12,
+                'Weight Lifting': 6,
+                'Push-ups': 7,
+                'Pull-ups': 8,
+                'Squats': 7,
+                'Deadlifts': 8,
+                'Bench Press': 7,
+                'Yoga': 4,
+                'Pilates': 5,
+                'Stretching': 3,
+                'Core Work': 6,
+                'Plank': 5,
+                'CrossFit': 11,
+                'Boxing': 10,
+                'Dance': 6,
+                'Other': 5
+            };
+            
+            var estimated = (caloriesPerMin[exercise] || 5) * duration;
+            $('#calories_burned').val(estimated);
+        }
+    });
+});
+</script>
+{% endblock %}
